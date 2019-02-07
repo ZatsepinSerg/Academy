@@ -8,8 +8,9 @@ use Illuminate\Http\Request;
 
 class Task extends Model
 {
-    protected $hash;
-
+    /**
+     * Need for test knowledge of programming languages
+     */
     const LANGS_PROGRAMMING = [
         0 => 'Visual Basic',
         1 => 'PHP',
@@ -18,17 +19,32 @@ class Task extends Model
         4 => '.net',
     ];
 
+    /**
+     * Need for test what day is today
+     */
     const DAYS = [
         1 => 'Понедельник',
-        'Вторник', 'Среда', 'Четверг',
-        'Пятница', 'Суббота', 'Воскресенье'];
+        2 => 'Вторник',
+        3 => 'Среда',
+        4 => 'Четверг',
+        5 => 'Пятница',
+        6 => 'Суббота',
+        7 => 'Воскресенье'
+    ];
 
-    public function generateTaskStepOne(string $hash)
+    /**
+     * @param string $hash
+     */
+    public function generateTaskReadText(string $hash): void
     {
         Redis::set("student:{$hash}:time:start", time());
     }
 
-    public function generateTaskStepTwo(string $hash)
+    /**
+     * @param string $hash
+     * @return array
+     */
+    public function generateTaskSumNumber(string $hash): array
     {
         $numberOne = rand(0, 5);
         $numberTwo = rand(0, 5);
@@ -40,12 +56,19 @@ class Task extends Model
         return compact(['numberOne', 'numberTwo']);
     }
 
-    public function generateTaskStepThree()
+    /**
+     * @return array
+     */
+    public function generateTaskProgrammingLanguages(): array
     {
         return self::LANGS_PROGRAMMING;
     }
 
-    public function generateTaskStepFour(string $hash)
+    /**
+     * @param string $hash
+     * @return array
+     */
+    public function generateTaskDayIsToday(string $hash): array
     {
         $today = date('N');
 
@@ -66,12 +89,19 @@ class Task extends Model
         return $tasks;
     }
 
-    public function checkTaskStepOne(string $hash)
+    /**
+     * @param string $hash
+     */
+    public function checkTaskReadText(string $hash): void
     {
         Redis::incr("student:{$hash}:result");
     }
 
-    public function checkTaskStepTwo(Request $request, string $hash)
+    /**
+     * @param Request $request
+     * @param string $hash
+     */
+    public function checkTaskSumNumber(Request $request, string $hash): void
     {
         if ($request->sum == Redis::get("student:{$hash}:task:sum")) {
             Redis::incr("student:{$hash}:result");
@@ -79,14 +109,22 @@ class Task extends Model
         }
     }
 
-    public function checkTaskStepThree(Request $request, string $hash)
+    /**
+     * @param Request $request
+     * @param string $hash
+     */
+    public function checkTaskProgrammingLanguages(Request $request, string $hash): void
     {
         if (!empty($request->lang) && !in_array(0, $request->lang)) {
             Redis::incr("student:{$hash}:result");
         }
     }
 
-    public function checkTaskStepFour(Request $request, string $hash)
+    /**
+     * @param Request $request
+     * @param string $hash
+     */
+    public function checkTaskDayIsToday(Request $request, string $hash): void
     {
         if ($request->day == Redis::get("student:{$hash}:task:today")) {
             Redis::incr("student:{$hash}:result");
@@ -95,5 +133,4 @@ class Task extends Model
 
         Redis::set("student:{$hash}:time:finish", time());
     }
-
 }

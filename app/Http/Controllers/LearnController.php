@@ -49,7 +49,7 @@ class LearnController extends Controller
     public function stepOne()
     {
         $hash = Cookie::get('student');
-        $this->task->generateTaskStepOne($hash);
+        $this->task->generateTaskReadText($hash);
 
         return view('learn.step_one');
     }
@@ -58,11 +58,10 @@ class LearnController extends Controller
     {
         $hash = Cookie::get('student');
 
-        $this->task->checkTaskStepOne($hash);
-        $tasks = $this->task->generateTaskStepTwo($hash);
+        $this->task->checkTaskReadText($hash);
+        $tasks = $this->task->generateSumNumber($hash);
 
         return view('learn.step_two', $tasks);
-
     }
 
     public function stepThree(Request $request)
@@ -75,30 +74,28 @@ class LearnController extends Controller
             ]
         );
 
-        $this->task->checkTaskStepTwo($request, $hash);
-        $tasks = $this->task->generateTaskStepThree();
+        $this->task->checkTaskSumNumber($request, $hash);
+        $tasks = $this->task->generateTaskProgrammingLanguages();
 
         return view('learn.step_three', compact('tasks'));
-
     }
 
     public function stepFour(Request $request)
     {
         $hash = Cookie::get('student');
 
-        $this->task->checkTaskStepThree($request, $hash);
+        $this->task->checkTaskProgrammingLanguages($request, $hash);
 
-        $tasks = $this->task->generateTaskStepFour($hash);
+        $tasks = $this->task->generateTaskDayIsToday($hash);
 
         return view('learn.step_four', compact('tasks'));
-
     }
 
     public function finish(Request $request)
     {
         $hash = Cookie::get('student');
 
-        $this->task->checkTaskStepFour($request, $hash);
+        $this->task->checkTaskDayIsToday($request, $hash);
 
         $result = new Result();
 
