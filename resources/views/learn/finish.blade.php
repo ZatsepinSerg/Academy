@@ -3,23 +3,25 @@
 
 @section('content')
     <div>
-        <img src="{{$test}}" class="rounded mx-auto d-block" alt="MyImage">
+        <img  src="{{URL::asset("storage/".$resultTest['image']}}" class="rounded mx-auto d-block" >
     </div>
     <div>
         <p>
-            Поздравляем!!!, {{$email}}
+            Поздравляем,{{$resultTest['email']}}!!!
         </p>
         <p>
-            Твоя оценка -{{$result}} баллов
+            Твоя оценка :{{$resultTest['result']}} баллов
         </p>
         <p>
-            Общее время прохождения теста - {{$total_time}} сек.
+            Общее время прохождения теста :{{$resultTest['totalTime']}} сек.
         </p>
 
     </div>
     <div class="col-sm-8 col-lg-8"></div>
     <div class="col-sm-2 col-lg-2">
-        <button class="btn btn-info">Перейти в начало
-        </button>
+        <form action="/" method="get">
+            <input type="submit" class="btn btn-info" value="Перейти в начало">
+        </form>
     </div>
+
 @endsection

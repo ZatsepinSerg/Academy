@@ -2,14 +2,14 @@
 @include('layout_parts.errors')
 
 @section('content')
-    <form action="/step-three" method="get" name="next">
+    <form action="/finish" method="get" name="next">
         {{csrf_field()}}
         <div>
             <p>
                 Какой сегодня день недели?
             </p>
             @foreach( $tasks AS $key =>$task )
-                <input type="radio" name="day[]" value="{{$key}}" placeholder="{{$task}}">
+                <input type="radio" name="day" value="{{$key}}" placeholder="{{$task}}">
                 <label>{{$task}}</label>
                 </br>
             @endforeach

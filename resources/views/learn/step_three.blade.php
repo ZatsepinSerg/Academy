@@ -2,7 +2,7 @@
 @include('layout_parts.errors')
 
 @section('content')
-    <form action="/step-three" method="get" name="next">
+    <form action="/step-four" method="get" name="next">
         {{csrf_field()}}
         <div>
             <p>

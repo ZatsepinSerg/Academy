@@ -17,7 +17,11 @@
     </div>
     <div class="col-sm-8 col-lg-8"></div>
     <div class="col-sm-2 col-lg-2">
-        <button class="btn btn-info">Next
-        </button>
+        <form method="get" action="/step-two">
+            {{csrf_field()}}
+            <input type="submit" placeholder="Next">
+        </form>
+    </div>
+
     </div>
 @endsection
