@@ -17,7 +17,7 @@ class CreateTableResults extends Migration
             $table->increments('id');
             $table->string('email',255);
             $table->integer('grades');
-            $table->float('total_time');
+            $table->integer('total_time');
             $table->timestamps();
         });
     }
