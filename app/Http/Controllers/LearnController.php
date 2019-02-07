@@ -59,7 +59,7 @@ class LearnController extends Controller
         $hash = Cookie::get('student');
 
         $this->task->checkTaskReadText($hash);
-        $tasks = $this->task->generateSumNumber($hash);
+        $tasks = $this->task->generateTaskSumNumber($hash);
 
         return view('learn.step_two', $tasks);
     }
