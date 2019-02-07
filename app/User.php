@@ -3,8 +3,9 @@
 namespace App;
 
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Redis;
+use Illuminate\Http\Request;
 
 class User extends Authenticatable
 {
@@ -27,4 +28,15 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function setUserInfo(Request $request,string $hash)
+    {
+        Redis::set("student:{$hash}:email", $request->email);
+
+        if (!is_null($request->file('image'))) {
+            $imgPath = File::saveImageStudent($request);
+
+            Redis::set("student:{$hash}:img", $imgPath);
+        }
+    }
 }

@@ -3,45 +3,56 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Http\Request;
 
 class Task extends Model
 {
+    protected $hash;
 
-    public function generateTaskStepTwo()
+    const LANGS_PROGRAMMING = [
+        0 => 'Visual Basic',
+        1 => 'PHP',
+        2 => 'Python',
+        3 => 'JS',
+        4 => '.net',
+    ];
+
+    const DAYS = [
+        1 => 'Понедельник',
+        'Вторник', 'Среда', 'Четверг',
+        'Пятница', 'Суббота', 'Воскресенье'];
+
+    public function generateTaskStepOne(string $hash)
     {
-        $numberOne = rand(0, 5000);
-        $numberTwo = rand(0, 5000);
+        Redis::set("student:{$hash}:time:start", time());
+    }
+
+    public function generateTaskStepTwo(string $hash)
+    {
+        $numberOne = rand(0, 5);
+        $numberTwo = rand(0, 5);
 
         $sum = $numberOne + $numberTwo;
 
-        //set in cache
+        Redis::set("student:{$hash}:task:sum", $sum);
 
-        return compact(['numberOne','numberTwo']);
+        return compact(['numberOne', 'numberTwo']);
     }
 
     public function generateTaskStepThree()
     {
-        $langProgramming = [
-            0 => 'Visual Basic',
-            1 => 'PHP',
-            2 => 'Python',
-            3 => 'JS',
-            4 => '.net',
-        ];
-
-        return $langProgramming;
+        return self::LANGS_PROGRAMMING;
     }
 
-    public function generateTaskStepFour()
+    public function generateTaskStepFour(string $hash)
     {
-        $days = [
-            1 => 'Понедельник',
-            'Вторник', 'Среда', 'Четверг',
-            'Пятница', 'Суббота', 'Воскресенье'];
-
         $today = date('N');
-// save in cache
+
+        Redis::set("student:{$hash}:task:today", $today);
+
+        $days = self::DAYS;
+
         $tasks[$today] = $days[$today];
 
         unset($days[$today]);
@@ -55,26 +66,34 @@ class Task extends Model
         return $tasks;
     }
 
-    public function checkTaskStepOne(Request $request)
+    public function checkTaskStepOne(string $hash)
     {
-
+        Redis::incr("student:{$hash}:result");
     }
 
-    public function checkTaskStepTwo(Request $request)
+    public function checkTaskStepTwo(Request $request, string $hash)
+    {
+        if ($request->sum == Redis::get("student:{$hash}:task:sum")) {
+            Redis::incr("student:{$hash}:result");
+            Redis::delete("student:{$hash}:task:sum");
+        }
+    }
+
+    public function checkTaskStepThree(Request $request, string $hash)
     {
         if (!empty($request->lang) && !in_array(0, $request->lang)) {
-            //add in cache  + 1
+            Redis::incr("student:{$hash}:result");
+        }
+    }
+
+    public function checkTaskStepFour(Request $request, string $hash)
+    {
+        if ($request->day == Redis::get("student:{$hash}:task:today")) {
+            Redis::incr("student:{$hash}:result");
+            Redis::delete("student:{$hash}:task:today");
         }
 
-    }
-    public function checkTaskStepThree(Request $request)
-    {
-
-    }
-
-    public function checkTaskStepFour(Request $request)
-    {
-
+        Redis::set("student:{$hash}:time:finish", time());
     }
 
 }

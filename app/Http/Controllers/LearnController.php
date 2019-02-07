@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-
-use App\File;
 use App\Result;
 use App\Task;
+use App\User;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Str;
 
 class LearnController extends Controller
 {
@@ -19,12 +21,14 @@ class LearnController extends Controller
 
     public function index()
     {
-        $test = new Result();
-        $lastResult = $test->getLastResult();
+        $hash = Str::random();
+        Cookie::queue('student', $hash, 60);
+
+        $result = new Result();
+        $lastResult = $result->getLastResult();
 
         return view('learn.index', compact('lastResult'));
     }
-
 
     public function store(Request $request)
     {
@@ -34,46 +38,77 @@ class LearnController extends Controller
                 'file' => 'mimes:jpeg,bmp,png',
             ]
         );
+        $hash = Cookie::get('student');
 
-        $imgPath = File::saveImageStudent($request);
-        //TODO:: сохранить в redis время начала и изображение/email
-        return view('learn.step_one');
+        $user = new User();
+        $user->setUserInfo($request, $hash);
+
+        return redirect('/step-one');
     }
 
     public function stepOne()
     {
-        $tasks = $this->task->generateTaskStepTwo();
+        $hash = Cookie::get('student');
+        $this->task->generateTaskStepOne($hash);
 
-        return view('learn.step_two', $tasks);
+        return view('learn.step_one');
     }
 
-    public function stepTwo(Request $request)
+    public function stepTwo()
     {
-        $this->task->checkTaskStepOne($request);
-        $tasks = $this->task->generateTaskStepThree();
+        $hash = Cookie::get('student');
 
-        return view('learn.step_three', compact('tasks'));
+        $this->task->checkTaskStepOne($hash);
+        $tasks = $this->task->generateTaskStepTwo($hash);
+
+        return view('learn.step_two', $tasks);
+
     }
 
     public function stepThree(Request $request)
     {
-        $this->task->checkTaskStepThree($request);
+        $hash = Cookie::get('student');
 
-        $tasks = $this->task->generateTaskStepFour();
+        $request->validate(
+            [
+                'sum' => 'required|numeric',
+            ]
+        );
 
-        return view('learn.step_four', compact('tasks'));
+        $this->task->checkTaskStepTwo($request, $hash);
+        $tasks = $this->task->generateTaskStepThree();
+
+        return view('learn.step_three', compact('tasks'));
+
     }
 
     public function stepFour(Request $request)
     {
-       $this->task->checkTaskStepFour($request);
+        $hash = Cookie::get('student');
 
-       return redirect('/finish');
+        $this->task->checkTaskStepThree($request, $hash);
+
+        $tasks = $this->task->generateTaskStepFour($hash);
+
+        return view('learn.step_four', compact('tasks'));
+
     }
 
-
-    public function finish()
+    public function finish(Request $request)
     {
+        $hash = Cookie::get('student');
 
+        $this->task->checkTaskStepFour($request, $hash);
+
+        $result = new Result();
+
+        $resultTest = $result->getResultTest($hash);
+
+        if (empty($resultTest))
+            throw new Exception('Result can`t empty');
+
+        $result->saveResultTest($resultTest);
+
+        return view('learn.finish', compact('resultTest'));
     }
 }
