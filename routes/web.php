@@ -14,3 +14,13 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::GET('/start','LearnController@index');
+Route::POST('/start','LearnController@store');
+Route::GET('/step-one','LearnController@stepOne');
+Route::GET('/step-two','LearnController@stepTwo');
+Route::GET('/step-three','LearnController@stepThree');
+Route::GET('/step-four','LearnController@stepFour');
+Route::GET('/finish','LearnController@stepFour');
+
