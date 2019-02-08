@@ -51,7 +51,7 @@ class Task extends Model
 
         $sum = $numberOne + $numberTwo;
 
-        Redis::set("student:{$hash}:task:sum", $sum);
+        Redis::set("student:{$hash}:task:sum", $sum,60);
 
         return compact(['numberOne', 'numberTwo']);
     }
@@ -72,7 +72,7 @@ class Task extends Model
     {
         $today = date('N');
 
-        Redis::set("student:{$hash}:task:today", $today);
+        Redis::set("student:{$hash}:task:today", $today,60);
 
         $days = self::DAYS;
 
@@ -97,7 +97,7 @@ class Task extends Model
         if (!Redis::get("student:{$hash}:task:text:check", 0))
             Redis::incr("student:{$hash}:result");
 
-        Redis::set("student:{$hash}:task:text:check", 1);
+        Redis::set("student:{$hash}:task:text:check", 1,60);
     }
 
     /**
@@ -110,7 +110,7 @@ class Task extends Model
             if ($request->sum == Redis::get("student:{$hash}:task:sum"))
                 Redis::incr("student:{$hash}:result");
 
-            Redis::set("student:{$hash}:task:sum:check", 1);
+            Redis::set("student:{$hash}:task:sum:check", 1,60);
         }
     }
 
@@ -124,7 +124,7 @@ class Task extends Model
             if (!empty($request->lang) && !in_array(0, $request->lang))
                 Redis::incr("student:{$hash}:result");
 
-            Redis::set("student:{$hash}:task:lang:check", 1);
+            Redis::set("student:{$hash}:task:lang:check", 1,60);
         }
     }
 
@@ -138,7 +138,7 @@ class Task extends Model
             if ($request->day == Redis::get("student:{$hash}:task:today"))
                 Redis::incr("student:{$hash}:result");
 
-            Redis::set("student:{$hash}:task:today:check", 1);
+            Redis::set("student:{$hash}:task:today:check", 1,60);
         }
     }
 }
