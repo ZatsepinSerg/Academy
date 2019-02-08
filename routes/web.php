@@ -11,11 +11,20 @@
 |
 */
 
-Route::GET('/', 'LearnController@index');
-Route::POST('/start', 'LearnController@store');
-Route::GET('/step-one', 'LearnController@stepOne');
-Route::GET('/step-two', 'LearnController@stepTwo');
-Route::GET('/step-three', 'LearnController@stepThree');
-Route::GET('/step-four', 'LearnController@stepFour');
-Route::GET('/finish', 'LearnController@finish');
+Route::get('/', 'LearnController@index');
+Route::post('/start', 'LearnController@store');
+
+Route::get('/step-one', 'LearnController@stepReadText');
+Route::post('/step-one', 'LearnController@checkStepReadText');
+
+Route::get('/step-two', 'LearnController@stepSumNumber');
+Route::post('/step-two', 'LearnController@checkStepSumNumber');
+
+Route::get('/step-three', 'LearnController@stepProgrammingLanguages');
+Route::post('/step-three', 'LearnController@checkProgrammingLanguages');
+
+Route::get('/step-four', 'LearnController@stepDayIsToday');
+Route::post('/step-four', 'LearnController@checkDayIsToday');
+
+Route::get('/finish', 'LearnController@finish');
 

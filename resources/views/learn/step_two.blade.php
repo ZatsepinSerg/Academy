@@ -7,7 +7,7 @@
          style="border: 1px solid #ddd;margin-top: 40px;border-radius: 5px;padding: 20px 20px 20px 20px;background: aliceblue;">
 
 
-        <form method="get" action="/step-three">
+        <form method="post" action="/step-two">
             {{csrf_field()}}
             <div>
                 <h2>Введите сумму чисел  {{$numberOne}} + {{$numberTwo}}</h2>

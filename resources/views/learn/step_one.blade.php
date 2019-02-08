@@ -16,7 +16,7 @@
             Однако, поскольку в реальности эта птица никогда не обитала в данном регионе,
             учёные считают эту версию наименее вероятной.
         </p>
-        <form method="get" action="/step-two">
+        <form method="post" action="/step-one">
             {{csrf_field()}}
             <button type="submit" class="btn btn-success pull-right" style="width: 20%;margin-top: 10px">Next</button>
         </form>

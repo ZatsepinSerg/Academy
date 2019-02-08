@@ -49,7 +49,7 @@ class LearnController extends Controller
         return redirect('/step-one');
     }
 
-    public function stepOne()
+    public function stepReadText()
     {
         TimeHelper::setStartTime($this->hash);
 
@@ -58,15 +58,21 @@ class LearnController extends Controller
         return view('learn.step_one');
     }
 
-    public function stepTwo()
+    public function checkStepReadText()
     {
         $this->task->checkTaskReadText($this->hash);
+
+        return redirect('/step-two');
+    }
+
+    public function stepSumNumber()
+    {
         $tasks = $this->task->generateTaskSumNumber($this->hash);
 
         return view('learn.step_two', $tasks);
     }
 
-    public function stepThree(Request $request)
+    public function checkStepSumNumber(Request $request)
     {
         $request->validate(
             [
@@ -75,28 +81,43 @@ class LearnController extends Controller
         );
 
         $this->task->checkTaskSumNumber($request, $this->hash);
+
+        return redirect('/step-three');
+    }
+
+    public function stepProgrammingLanguages()
+    {
         $tasks = $this->task->generateTaskProgrammingLanguages();
 
         return view('learn.step_three', compact('tasks'));
     }
 
-    public function stepFour(Request $request)
+    public function checkProgrammingLanguages(Request $request)
     {
         $this->task->checkTaskProgrammingLanguages($request, $this->hash);
 
+        return redirect('/step-four');
+    }
+
+    public function stepDayIsToday()
+    {
         $tasks = $this->task->generateTaskDayIsToday($this->hash);
 
         return view('learn.step_four', compact('tasks'));
     }
 
-    public function finish(Request $request)
+    public function checkDayIsToday(Request $request)
+    {
+        $this->task->checkTaskDayIsToday($request, $this->hash);
+
+        return redirect('/finish');
+    }
+
+    public function finish()
     {
         TimeHelper::setEndTime($this->hash);
 
-        $this->task->checkTaskDayIsToday($request, $this->hash);
-
         $result = new Result();
-
         $resultTest = $result->getResultTest($this->hash);
 
         if (empty($resultTest))
