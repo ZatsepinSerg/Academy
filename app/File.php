@@ -7,7 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class File extends Model
 {
-    public static function saveImageStudent(Request $request):string
+    /**
+     * Save loaded image
+     *
+     * @param Request $request
+     * @return string
+     */
+    public static function saveImageUser(Request $request):string
     {
         return $request->file('image')->store('uploads', 'public');
     }

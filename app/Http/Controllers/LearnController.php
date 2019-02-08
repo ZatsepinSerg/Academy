@@ -23,6 +23,11 @@ class LearnController extends Controller
         $this->hash = Cookie::get('student');
     }
 
+    /**
+     * Index page show ten last result and form create new test
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function index()
     {
         $hash = Str::random();
@@ -34,6 +39,12 @@ class LearnController extends Controller
         return view('learn.index', compact('lastResult'));
     }
 
+    /**
+     * Validate and save user info for new test
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function store(Request $request)
     {
         $request->validate(
@@ -49,6 +60,11 @@ class LearnController extends Controller
         return redirect('/step-one');
     }
 
+    /**
+     * Set start time and generate task for read text
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function stepReadText()
     {
         TimeHelper::setStartTime($this->hash);
@@ -58,6 +74,11 @@ class LearnController extends Controller
         return view('learn.step_one',compact('text'));
     }
 
+    /**
+     * Check of the task Read Text
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function checkStepReadText()
     {
         $this->task->checkTaskReadText($this->hash);
@@ -65,6 +86,11 @@ class LearnController extends Controller
         return redirect('/step-two');
     }
 
+    /**
+     * Generate task for sum number
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function stepSumNumber()
     {
         $tasks = $this->task->generateTaskSumNumber($this->hash);
@@ -72,6 +98,12 @@ class LearnController extends Controller
         return view('learn.step_two', $tasks);
     }
 
+    /**
+     * Check of the task sum number
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function checkStepSumNumber(Request $request)
     {
         $request->validate(
@@ -85,6 +117,11 @@ class LearnController extends Controller
         return redirect('/step-three');
     }
 
+    /**
+     * Generate task for programming languages
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function stepProgrammingLanguages()
     {
         $tasks = $this->task->generateTaskProgrammingLanguages();
@@ -92,6 +129,12 @@ class LearnController extends Controller
         return view('learn.step_three', compact('tasks'));
     }
 
+    /**
+     * Check of the task programming languages
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function checkProgrammingLanguages(Request $request)
     {
         $this->task->checkTaskProgrammingLanguages($request, $this->hash);
@@ -99,6 +142,11 @@ class LearnController extends Controller
         return redirect('/step-four');
     }
 
+    /**
+     *  Generate task for day is today
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function stepDayIsToday()
     {
         $tasks = $this->task->generateTaskDayIsToday($this->hash);
@@ -106,6 +154,12 @@ class LearnController extends Controller
         return view('learn.step_four', compact('tasks'));
     }
 
+    /**
+     * Check of the task day is today
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function checkDayIsToday(Request $request)
     {
         $this->task->checkTaskDayIsToday($request, $this->hash);
@@ -113,6 +167,12 @@ class LearnController extends Controller
         return redirect('/finish');
     }
 
+    /**
+     * Creating a report for passing the test
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws Exception
+     */
     public function finish()
     {
         TimeHelper::setEndTime($this->hash);

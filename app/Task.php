@@ -32,7 +32,9 @@ class Task extends Model
         7 => 'Воскресенье'
     ];
 
-
+    /**
+     * Need for test what read text
+     */
     const TEXT = "
     <h1>Азорские острова</h1>
         <p>
@@ -45,6 +47,9 @@ class Task extends Model
             учёные считают эту версию наименее вероятной.
         </p>";
 
+    /**
+     * @return string
+     */
     public function generateTaskReadText(): string
     {
         return self::TEXT;

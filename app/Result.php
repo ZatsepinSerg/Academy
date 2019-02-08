@@ -30,7 +30,7 @@ class Result extends Model
 
 
     /**
-     * save result in db
+     * Save result in db after the end of the test
      *
      * @param array $params
      */
@@ -44,6 +44,7 @@ class Result extends Model
     }
 
     /**
+     * Creating a set of information about passing the test
      *
      * @param string $hash
      * @return array
@@ -66,6 +67,8 @@ class Result extends Model
     }
 
     /**
+     * Delete test information
+     *
      * @param string $hash
      */
     public function clearStudentResult(string $hash): void

@@ -29,12 +29,18 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function setUserInfo(Request $request,string $hash)
+    /**
+     * Saving information about the user and his image
+     *
+     * @param Request $request
+     * @param string $hash
+     */
+    public function setUserInfo(Request $request, string $hash)
     {
         Redis::set("student:{$hash}:email", $request->email);
 
         if (!is_null($request->file('image'))) {
-            $imgPath = File::saveImageStudent($request);
+            $imgPath = File::saveImageUser($request);
 
             Redis::set("student:{$hash}:img", $imgPath);
         }
