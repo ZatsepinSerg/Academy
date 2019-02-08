@@ -14,10 +14,13 @@ use Illuminate\Support\Str;
 class LearnController extends Controller
 {
     protected $task;
+    protected $hash;
 
     public function __construct()
     {
         $this->task = new Task();
+
+        $this->hash = Cookie::get('student');
     }
 
     public function index()
@@ -39,46 +42,39 @@ class LearnController extends Controller
                 'file' => 'mimes:jpeg,bmp,png',
             ]
         );
-        $hash = Cookie::get('student');
 
         $user = new User();
-        $user->setUserInfo($request, $hash);
+        $user->setUserInfo($request, $this->hash);
 
         return redirect('/step-one');
     }
 
     public function stepOne()
     {
-        $hash = Cookie::get('student');
+        TimeHelper::setStartTime($this->hash);
 
-        TimeHelper::setStartTime($hash);
-
-        $this->task->generateTaskReadText($hash);
+        $this->task->generateTaskReadText($this->hash);
 
         return view('learn.step_one');
     }
 
     public function stepTwo()
     {
-        $hash = Cookie::get('student');
-
-        $this->task->checkTaskReadText($hash);
-        $tasks = $this->task->generateTaskSumNumber($hash);
+        $this->task->checkTaskReadText($this->hash);
+        $tasks = $this->task->generateTaskSumNumber($this->hash);
 
         return view('learn.step_two', $tasks);
     }
 
     public function stepThree(Request $request)
     {
-        $hash = Cookie::get('student');
-
         $request->validate(
             [
                 'sum' => 'required|numeric',
             ]
         );
 
-        $this->task->checkTaskSumNumber($request, $hash);
+        $this->task->checkTaskSumNumber($request, $this->hash);
         $tasks = $this->task->generateTaskProgrammingLanguages();
 
         return view('learn.step_three', compact('tasks'));
@@ -86,26 +82,22 @@ class LearnController extends Controller
 
     public function stepFour(Request $request)
     {
-        $hash = Cookie::get('student');
+        $this->task->checkTaskProgrammingLanguages($request, $this->hash);
 
-        $this->task->checkTaskProgrammingLanguages($request, $hash);
-
-        $tasks = $this->task->generateTaskDayIsToday($hash);
+        $tasks = $this->task->generateTaskDayIsToday($this->hash);
 
         return view('learn.step_four', compact('tasks'));
     }
 
     public function finish(Request $request)
     {
-        $hash = Cookie::get('student');
+        TimeHelper::setEndTime($this->hash);
 
-        TimeHelper::setEndTime($hash);
-
-        $this->task->checkTaskDayIsToday($request, $hash);
+        $this->task->checkTaskDayIsToday($request, $this->hash);
 
         $result = new Result();
 
-        $resultTest = $result->getResultTest($hash);
+        $resultTest = $result->getResultTest($this->hash);
 
         if (empty($resultTest))
             throw new Exception('Result can`t empty');
