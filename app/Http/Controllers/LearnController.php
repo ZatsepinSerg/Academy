@@ -53,9 +53,9 @@ class LearnController extends Controller
     {
         TimeHelper::setStartTime($this->hash);
 
-        $this->task->generateTaskReadText($this->hash);
+        $text= $this->task->generateTaskReadText();
 
-        return view('learn.step_one');
+        return view('learn.step_one',compact('text'));
     }
 
     public function checkStepReadText()

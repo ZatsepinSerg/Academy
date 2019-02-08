@@ -32,12 +32,22 @@ class Task extends Model
         7 => 'Воскресенье'
     ];
 
-    /**
-     * @param string $hash
-     */
-    public function generateTaskReadText(string $hash): void
-    {
 
+    const TEXT = "
+    <h1>Азорские острова</h1>
+        <p>
+            Название островов, скорее всего, происходит от устаревшего португальского слова «azures»
+            (созвучно русскому «лазурь»), что буквально означает «голубые». Есть и более поэтичная версия,
+            утверждающая, что своё название острова взяли от слова «Açor» — ястреб («Ястребиными» острова называли
+            арабы).
+            По легенде мореходов, ястребы летели к своим гнёздам и указали путь к островам.
+            Однако, поскольку в реальности эта птица никогда не обитала в данном регионе,
+            учёные считают эту версию наименее вероятной.
+        </p>";
+
+    public function generateTaskReadText(): string
+    {
+        return self::TEXT;
     }
 
     /**
@@ -51,7 +61,7 @@ class Task extends Model
 
         $sum = $numberOne + $numberTwo;
 
-        Redis::set("student:{$hash}:task:sum", $sum,60);
+        Redis::set("student:{$hash}:task:sum", $sum, 60);
 
         return compact(['numberOne', 'numberTwo']);
     }
@@ -72,7 +82,7 @@ class Task extends Model
     {
         $today = date('N');
 
-        Redis::set("student:{$hash}:task:today", $today,60);
+        Redis::set("student:{$hash}:task:today", $today, 60);
 
         $days = self::DAYS;
 
@@ -97,7 +107,7 @@ class Task extends Model
         if (!Redis::get("student:{$hash}:task:text:check", 0))
             Redis::incr("student:{$hash}:result");
 
-        Redis::set("student:{$hash}:task:text:check", 1,60);
+        Redis::set("student:{$hash}:task:text:check", 1, 60);
     }
 
     /**
@@ -110,7 +120,7 @@ class Task extends Model
             if ($request->sum == Redis::get("student:{$hash}:task:sum"))
                 Redis::incr("student:{$hash}:result");
 
-            Redis::set("student:{$hash}:task:sum:check", 1,60);
+            Redis::set("student:{$hash}:task:sum:check", 1, 60);
         }
     }
 
@@ -124,7 +134,7 @@ class Task extends Model
             if (!empty($request->lang) && !in_array(0, $request->lang))
                 Redis::incr("student:{$hash}:result");
 
-            Redis::set("student:{$hash}:task:lang:check", 1,60);
+            Redis::set("student:{$hash}:task:lang:check", 1, 60);
         }
     }
 
@@ -138,7 +148,7 @@ class Task extends Model
             if ($request->day == Redis::get("student:{$hash}:task:today"))
                 Redis::incr("student:{$hash}:result");
 
-            Redis::set("student:{$hash}:task:today:check", 1,60);
+            Redis::set("student:{$hash}:task:today:check", 1, 60);
         }
     }
 }
