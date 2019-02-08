@@ -37,7 +37,7 @@ class Task extends Model
      */
     public function generateTaskReadText(string $hash): void
     {
-        Redis::set("student:{$hash}:time:start", time());
+
     }
 
     /**
@@ -94,7 +94,10 @@ class Task extends Model
      */
     public function checkTaskReadText(string $hash): void
     {
-        Redis::incr("student:{$hash}:result");
+        if (!Redis::get("student:{$hash}:task:text:check", 0))
+            Redis::incr("student:{$hash}:result");
+
+        Redis::set("student:{$hash}:task:text:check", 1);
     }
 
     /**
@@ -103,9 +106,11 @@ class Task extends Model
      */
     public function checkTaskSumNumber(Request $request, string $hash): void
     {
-        if ($request->sum == Redis::get("student:{$hash}:task:sum")) {
-            Redis::incr("student:{$hash}:result");
-            Redis::delete("student:{$hash}:task:sum");
+        if (!Redis::get("student:{$hash}:task:sum:check", 0)) {
+            if ($request->sum == Redis::get("student:{$hash}:task:sum"))
+                Redis::incr("student:{$hash}:result");
+
+            Redis::set("student:{$hash}:task:sum:check", 1);
         }
     }
 
@@ -115,8 +120,11 @@ class Task extends Model
      */
     public function checkTaskProgrammingLanguages(Request $request, string $hash): void
     {
-        if (!empty($request->lang) && !in_array(0, $request->lang)) {
-            Redis::incr("student:{$hash}:result");
+        if (!Redis::get("student:{$hash}:task:lang:check", 0)) {
+            if (!empty($request->lang) && !in_array(0, $request->lang))
+                Redis::incr("student:{$hash}:result");
+
+            Redis::set("student:{$hash}:task:lang:check", 1);
         }
     }
 
@@ -126,11 +134,11 @@ class Task extends Model
      */
     public function checkTaskDayIsToday(Request $request, string $hash): void
     {
-        if ($request->day == Redis::get("student:{$hash}:task:today")) {
-            Redis::incr("student:{$hash}:result");
-            Redis::delete("student:{$hash}:task:today");
-        }
+        if (!Redis::get("student:{$hash}:task:today:check", 0)) {
+            if ($request->day == Redis::get("student:{$hash}:task:today"))
+                Redis::incr("student:{$hash}:result");
 
-        Redis::set("student:{$hash}:time:finish", time());
+            Redis::set("student:{$hash}:task:today:check", 1);
+        }
     }
 }
