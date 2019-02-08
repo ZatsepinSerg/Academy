@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Helpers\TimeHelper;
 use App\Result;
 use App\Task;
 use App\User;
@@ -49,6 +50,9 @@ class LearnController extends Controller
     public function stepOne()
     {
         $hash = Cookie::get('student');
+
+        TimeHelper::setStartTime($hash);
+
         $this->task->generateTaskReadText($hash);
 
         return view('learn.step_one');
@@ -94,6 +98,8 @@ class LearnController extends Controller
     public function finish(Request $request)
     {
         $hash = Cookie::get('student');
+
+        TimeHelper::setEndTime($hash);
 
         $this->task->checkTaskDayIsToday($request, $hash);
 
