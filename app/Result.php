@@ -68,7 +68,7 @@ class Result extends Model
     /**
      * @param string $hash
      */
-    private function clearStudentResult(string $hash): void
+    public function clearStudentResult(string $hash): void
     {
         Redis::delete("student:{$hash}:result",
             "student:{$hash}:email",
