@@ -2,20 +2,22 @@
 @include('layout_parts.errors')
 
 @section('content')
-    <form method="get" action="/step-three" >
-        {{csrf_field()}}
-        <div>
-            <p>
-                {{$numberOne}} + {{$numberTwo}}
-            </p>
-            <input class="input-group" name="sum" type="number" required>
-        </div>
+    <div class="col-lg-2"></div>
+    <div class="col-lg-8"
+         style="border: 1px solid #ddd;margin-top: 40px;border-radius: 5px;padding: 20px 20px 20px 20px;background: aliceblue;">
 
-        <div class="col-sm-8 col-lg-8"></div>
-        <div class="col-sm-2 col-lg-2">
-            <input type="submit" placeholder="Next">
-        </div>
-    </form>
+
+        <form method="get" action="/step-three">
+            {{csrf_field()}}
+            <div>
+                <h2>Введите сумму чисел  {{$numberOne}} + {{$numberTwo}}</h2>
+                <input  class="form-control"  name="sum" type="number" required>
+            </div>
+
+            <button type="submit" class="btn btn-success pull-right" style="width: 20%;margin-top: 10px">Next</button>
+        </form>
+    </div>
+    <div class="col-lg-2"></div>
 @endsection
 
 
